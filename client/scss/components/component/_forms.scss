@@ -224,6 +224,11 @@ input[type="search"]::-webkit-search-decoration {
     -webkit-appearance: none;
 }
 
+input[type="file"] {
+    min-height: auto;
+    padding: $form-input-height - 37px;
+}
+
 
 // Select
 select {
@@ -419,7 +424,7 @@ input[type='range'] {
 		border: $form-input-range-track-border-width solid $form-input-range-track-border-color;
 		border-radius: $form-input-range-track-radius;
 	}
-	
+
 	&::-webkit-slider-thumb {
 		@include thumb;
 		-webkit-appearance: none;
