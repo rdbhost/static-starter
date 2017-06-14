@@ -157,8 +157,8 @@ input[type="tel"],
 input[type="time"],
 input[type="url"],
 input[type="week"],
+.file-input,
 input[list],
-input[type="file"],
 select,
 textarea {
 	width: $form-input-width;
@@ -186,6 +186,7 @@ input[type="tel"],
 input[type="time"],
 input[type="url"],
 input[type="week"],
+.file-input,
 input[list] {
     height: $form-input-height;
     -webkit-appearance: none;
@@ -212,9 +213,6 @@ textarea {
     overflow: auto;
     padding:$form-textarea-padding;
 }
-input[type="file"] {
-    min-height: $form-input-height;
-}
 input[type="search"] {
     height: $form-input-height;
     -webkit-appearance: none;
@@ -224,9 +222,29 @@ input[type="search"]::-webkit-search-decoration {
     -webkit-appearance: none;
 }
 
-input[type="file"] {
-    min-height: auto;
-    padding: $form-input-height - 37px;
+//File Input
+
+.file-input {
+    align-items: center;
+    display: flex;
+    min-height: $form-input-height;
+
+    #file-upload {
+        left: -9999px;
+	    position: absolute;
+    }
+
+    label[for="file-upload"]{
+        cursor: pointer;
+      	display: inline-block;
+      	margin: 0;
+    }
+
+    #filename{
+        margin-right: auto;
+        overflow: hidden;
+        white-space: nowrap;
+    }
 }
 
 

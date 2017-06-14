@@ -283,8 +283,13 @@ Button with icon</a></li>
 						<input type="text" placeholder="Placeholder Text" class="valid" required>
 					</div>
                     <div class="input-group">
-						<label>Label for Input</label>
-						<input type="file">
+                        <label>Label for Input</label>
+                        <div class="file-input">
+                            <form method="post" enctype="multipart/form-data" action="">
+                              <span id="filename">Select your file</span>
+                                <label for="file-upload">Browse<input type="file" id="file-upload"></label>
+                            </form>
+                        </div>
 					</div>
 					<div class="input-group">
 						<label>Label for Input</label>
