@@ -230,21 +230,18 @@ input[type="search"]::-webkit-search-decoration {
     min-height: $form-input-height;
     padding-right:0;
 
-    #file-upload {
+    input[type="file"] {
         left: -9999px;
 	    position: absolute;
     }
 
     label[for="file-upload"]{
-        cursor: pointer;
-      	display: inline-block;
-      	margin: 0;
+        margin: 0 0 0 auto;
         border-top-right-radius: $form-border-radius;
         border-bottom-right-radius: $form-border-radius;
     }
 
-    #filename{
-        margin-right: auto;
+    .filename{
         overflow: hidden;
         white-space: nowrap;
     }
