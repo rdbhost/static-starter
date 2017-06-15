@@ -229,13 +229,14 @@ input[type="search"]::-webkit-search-decoration {
     display: flex;
     min-height: $form-input-height;
     padding-right:0;
+    border-right: none;
 
     input[type="file"] {
         left: -9999px;
 	    position: absolute;
     }
 
-    label[for="file-upload"]{
+    .file-upload-label{
         margin: 0 0 0 auto;
         border-top-right-radius: $form-border-radius;
         border-bottom-right-radius: $form-border-radius;
