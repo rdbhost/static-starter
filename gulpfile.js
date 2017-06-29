@@ -4,7 +4,7 @@ var fs = require('fs');
 var request = require('sync-request');
 var config = require('./build/build.config.js');
 var gulp = require('gulp');
-var $ = require('gulp-load-plugins')();
+var plugins = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
 var browserSync = require('browser-sync');
 var notify = require('gulp-notify');
@@ -24,7 +24,7 @@ var run = require('gulp-run-command').default;
 function images() {
   return gulp.src(config.images)
     .pipe(gulp.dest(config.dist + '/img'))
-    .pipe($.size({
+    .pipe(plugins.size({
       title: 'img'
     }));
 }
@@ -32,23 +32,23 @@ function images() {
 //generate css files from scss sources
 function sass() {
   return gulp.src(config.mainScss)
-    .pipe($.sass())
-    .on('error', $.sass.logError)
+    .pipe(plugins.sass())
+    .on('error', plugins.sass.logError)
     .on("error", notify.onError({
         title: 'SASS ERROR',
 		message: '<%= error.message %>',
 		sound: true
     }))
     .pipe(gulp.dest(config.tmp))
-    .pipe($.size({
+    .pipe(plugins.size({
       title: 'sass'
     }));
 }
 function sass_dist() {
   return gulp.src(config.mainScss)
-    .pipe($.sass({outputStyle: 'compressed'}))
+    .pipe(plugins.sass({outputStyle: 'compressed'}))
     .pipe(gulp.dest(config.tmp))
-    .pipe($.size({
+    .pipe(plugins.size({
       title: 'sass'
     }));
 }
@@ -65,21 +65,21 @@ gulp.task('build', ['clean'], function(cb) {
 
 //generate a minified css files, 2 js file, change theirs name to be unique, and generate sourcemaps
 function html() {
-  var assets = $.useref.assets({
+  var assets = plugins.useref.assets({
     searchPath: '{build,client}'
   });
 
   return gulp.src(config.html)
     .pipe(assets)
-    .pipe($.if(['**/*main.js', '**/*main.css'], $.header(config.banner, {
+    .pipe(plugins.if(['**/*main.js', '**/*main.css'], plugins.header(config.banner, {
       pkg: pkg
     })))
-    .pipe($.rev())
+    .pipe(plugins.rev())
     .pipe(assets.restore())
-    .pipe($.useref())
-    .pipe($.revReplace())
+    .pipe(plugins.useref())
+    .pipe(plugins.revReplace())
     .pipe(gulp.dest(config.dist))
-    .pipe($.size({
+    .pipe(plugins.size({
       title: 'html'
     }));
 }
@@ -89,7 +89,7 @@ function copy_assets() {
   return gulp.src(config.assets, {
       dot: true
     }).pipe(gulp.dest(config.dist))
-    .pipe($.size({
+    .pipe(plugins.size({
       title: 'copy:assets'
     }));
 }
@@ -101,7 +101,7 @@ function copy() {
       '!' + config.base + '/*.html',
       '!' + config.base + '/src'
     ]).pipe(gulp.dest(config.dist))
-    .pipe($.size({
+    .pipe(plugins.size({
       title: 'copy'
     }));
 }
@@ -112,7 +112,7 @@ function copy_dev() {
       config.base + '/**/*',
       '!' + config.base + '/src'
     ]).pipe(gulp.dest(config.dev))
-    .pipe($.size({
+    .pipe(plugins.size({
       title: 'copy'
     }));
 }
@@ -124,7 +124,7 @@ function copy_dev_assets() {
       '!' + config.base + '/src',
       '!' + config.base + '/**/*.html'
     ]).pipe(gulp.dest(config.dev))
-    .pipe($.size({
+    .pipe(plugins.size({
       title: 'copy'
     }));
 }
@@ -135,7 +135,7 @@ function copy_fav() {
       config.base + '/img/fav/*',
       config.base + '/site-config/*'
     ]).pipe(gulp.dest(config.dist))
-    .pipe($.size({
+    .pipe(plugins.size({
       title: 'copy:fav'
     }));
 }
