@@ -4,7 +4,7 @@ var fs = require('fs');
 var request = require('sync-request');
 var config = require('./build/build.config.js');
 var gulp = require('gulp');
-var $ = require('gulp-load-plugins')();
+var plugins = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
 var browserSync = require('browser-sync');
 var notify = require('gulp-notify');
@@ -24,7 +24,7 @@ var run = require('gulp-run-command').default;
 gulp.task('images', function() {
   return gulp.src(config.images)
     .pipe(gulp.dest(config.dist + '/img'))
-    .pipe($.size({
+    .pipe(plugins.size({
       title: 'img'
     }));
 });
@@ -32,25 +32,21 @@ gulp.task('images', function() {
 //generate css files from scss sources
 gulp.task('sass', function() {
   return gulp.src(config.mainScss)
-    .pipe($.sass())
-    .on('error', $.sass.logError)
+    .pipe(plugins.sass())
+    .on('error', plugins.sass.logError)
     .on("error", notify.onError({
         title: 'SASS ERROR',
 		message: '<%= error.message %>',
 		sound: true
     }))
     .pipe(gulp.dest(config.tmp))
-    .pipe($.size({
-      title: 'sass'
-    }));
+    .pipe(plugins.size({title: 'sass'}));
 });
 gulp.task('sass:dist', function() {
   return gulp.src(config.mainScss)
-    .pipe($.sass({outputStyle: 'compressed'}))
+    .pipe(plugins.sass({outputStyle: 'compressed'}))
     .pipe(gulp.dest(config.tmp))
-    .pipe($.size({
-      title: 'sass'
-    }));
+    .pipe(plugins.size({title: 'sass'}));
 });
 
 //build files for creating a dist release
@@ -65,27 +61,25 @@ gulp.task('build', ['clean'], function(cb) {
 
 //generate a minified css files, 2 js file, change theirs name to be unique, and generate sourcemaps
 gulp.task('html', function() {
-  var assets = $.useref.assets({
+  var assets = plugins.useref.assets({
     searchPath: '{build,client}'
   });
 
   return gulp.src(config.html)
     .pipe(assets)
-    //.pipe($.if('*.js', $.uglify({
+    //.pipe(plugins.if('*.js', plugins.uglify({
     //  mangle: false,
     //})))
-    //.pipe($.if('*.css', cleanCSS()))
-    .pipe($.if(['**/*main.js', '**/*main.css'], $.header(config.banner, {
+    //.pipe(plugins.if('*.css', cleanCSS()))
+    .pipe(plugins.if(['**/*main.js', '**/*main.css'], plugins.header(config.banner, {
       pkg: pkg
     })))
-    .pipe($.rev())
+    .pipe(plugins.rev())
     .pipe(assets.restore())
-    .pipe($.useref())
-    .pipe($.revReplace())
+    .pipe(plugins.useref())
+    .pipe(plugins.revReplace())
     .pipe(gulp.dest(config.dist))
-    .pipe($.size({
-      title: 'html'
-    }));
+    .pipe(plugins.size({title: 'html'}));
 });
 
 //copy assets in dist folder
@@ -93,9 +87,7 @@ gulp.task('copy:assets', function() {
   return gulp.src(config.assets, {
       dot: true
     }).pipe(gulp.dest(config.dist))
-    .pipe($.size({
-      title: 'copy:assets'
-    }));
+    .pipe(plugins.size({title: 'copy:assets'}));
 });
 
 //copy assets in dist folder
@@ -105,9 +97,7 @@ gulp.task('copy', function() {
       '!' + config.base + '/*.html',
       '!' + config.base + '/src'
     ]).pipe(gulp.dest(config.dist))
-    .pipe($.size({
-      title: 'copy'
-    }));
+    .pipe(plugins.size({title: 'copy'}));
 });
 
 //copy assets in dev folder
@@ -116,9 +106,7 @@ gulp.task('copy:dev', function() {
       config.base + '/**/*',
       '!' + config.base + '/src'
     ]).pipe(gulp.dest(config.dev))
-    .pipe($.size({
-      title: 'copy'
-    }));
+    .pipe(plugins.size({title: 'copy'}));
 });
 
 // Copy dev assets
@@ -128,9 +116,7 @@ gulp.task('copy:dev:assets', function() {
       '!' + config.base + '/src',
       '!' + config.base + '/**/*.html'
     ]).pipe(gulp.dest(config.dev))
-    .pipe($.size({
-      title: 'copy'
-    }));
+    .pipe(plugins.size({title: 'copy'}));
 });
 
 // Create the favicon from the png
@@ -145,9 +131,7 @@ gulp.task('copy:fav', function() {
       config.base + '/img/fav/*',
       config.base + '/site-config/*'
     ]).pipe(gulp.dest(config.dist))
-    .pipe($.size({
-      title: 'copy:fav'
-    }));
+    .pipe(plugins.size({title: 'copy:fav'}));
 });
 
 //clean temporary directories
