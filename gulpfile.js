@@ -67,17 +67,8 @@ gulp.task('html', function() {
 
   return gulp.src(config.html)
     .pipe(assets)
-    //.pipe(plugins.if('*.js', plugins.uglify({
-    //  mangle: false,
-    //})))
-    //.pipe(plugins.if('*.css', cleanCSS()))
-    //.pipe(plugins.if(['**/*main.js', '**/*main.css'], plugins.header(config.banner, {
-    //  pkg: pkg
-    //})))
-    //.pipe(plugins.rev())
     .pipe(assets.restore())
     .pipe(plugins.useref())
-    //.pipe(plugins.revReplace())
     .pipe(gulp.dest(config.dist))
     .pipe(plugins.size({title: 'html'}));
 });
