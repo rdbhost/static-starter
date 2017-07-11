@@ -6,17 +6,19 @@ var config = require('./build/build.config.js');
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
+
+// var debug = require('gulp-debug');
+
 var browserSync = require('browser-sync');
-var notify = require('gulp-notify');
 var reload = browserSync.reload;
+
+var notify = require('gulp-notify');
 var pkg = require('./package');
 var del = require('del');
 var gulpif = require('gulp-if');
 var cleanCSS = require('gulp-clean-css');
 var _ = require('lodash');
 var inject = require('gulp-inject-string');
-var devConfig = JSON.parse(fs.readFileSync('./variables.json'));
-var liveConfig = JSON.parse(request('GET', config.config_url).getBody());
 var ico = require('gulp-to-ico');
 var run = require('gulp-run-command').default;
 
@@ -24,9 +26,7 @@ var run = require('gulp-run-command').default;
 gulp.task('images', function() {
   return gulp.src(config.images)
     .pipe(gulp.dest(config.dist + '/img'))
-    .pipe(plugins.size({
-      title: 'img'
-    }));
+    .pipe(plugins.size({title: 'img'}));
 });
 
 //generate css files from scss sources
@@ -51,7 +51,7 @@ gulp.task('sass:dist', function() {
 
 //build files for creating a dist release
 gulp.task('build:dist', ['clean'], function(cb) {
-  runSequence(['build', 'copy', 'copy:assets', 'images'], 'html', 'favicon', 'clean:dist', 'inject:prod', cb);
+  runSequence(['build', 'copy', 'copy:assets', 'images'], 'html', 'favicon', 'clean:dist', 'inject:cachebust', cb);
 });
 
 //build files for development
@@ -71,22 +71,21 @@ gulp.task('html', function() {
     //  mangle: false,
     //})))
     //.pipe(plugins.if('*.css', cleanCSS()))
-    .pipe(plugins.if(['**/*main.js', '**/*main.css'], plugins.header(config.banner, {
-      pkg: pkg
-    })))
-    .pipe(plugins.rev())
+    //.pipe(plugins.if(['**/*main.js', '**/*main.css'], plugins.header(config.banner, {
+    //  pkg: pkg
+    //})))
+    //.pipe(plugins.rev())
     .pipe(assets.restore())
     .pipe(plugins.useref())
-    .pipe(plugins.revReplace())
+    //.pipe(plugins.revReplace())
     .pipe(gulp.dest(config.dist))
     .pipe(plugins.size({title: 'html'}));
 });
 
 //copy assets in dist folder
 gulp.task('copy:assets', function() {
-  return gulp.src(config.assets, {
-      dot: true
-    }).pipe(gulp.dest(config.dist))
+  return gulp.src(config.assets, {dot: true})
+	.pipe(gulp.dest(config.dist))
     .pipe(plugins.size({title: 'copy:assets'}));
 });
 
@@ -105,7 +104,8 @@ gulp.task('copy:dev', function() {
   return gulp.src([
       config.base + '/**/*',
       '!' + config.base + '/src'
-    ]).pipe(gulp.dest(config.dev))
+    ])
+	.pipe(gulp.dest(config.dev))
     .pipe(plugins.size({title: 'copy'}));
 });
 
@@ -115,7 +115,8 @@ gulp.task('copy:dev:assets', function() {
       config.base + '/**/*',
       '!' + config.base + '/src',
       '!' + config.base + '/**/*.html'
-    ]).pipe(gulp.dest(config.dev))
+    ])
+	.pipe(gulp.dest(config.dev))
     .pipe(plugins.size({title: 'copy'}));
 });
 
@@ -130,7 +131,8 @@ gulp.task('copy:fav', function() {
   return gulp.src([
       config.base + '/img/fav/*',
       config.base + '/site-config/*'
-    ]).pipe(gulp.dest(config.dist))
+    ])
+	.pipe(gulp.dest(config.dist))
     .pipe(plugins.size({title: 'copy:fav'}));
 });
 
@@ -148,46 +150,29 @@ gulp.task('clean:dist', del.bind(null, [
 ]));
 
 //run the server after having built generated files, and watch for changes
-gulp.task('serve', function() {
-	runSequence('build', 'inject:dev', function() {
+gulp.task('serve', ['build'], function() {
 		browserSync({
 			notify: false,
 			logPrefix: pkg.name,
 			server: ['build', config.dev]
 		});
-	});
-	gulp.watch(config.html, ['inject:dev', reload]);
-	gulp.watch(config.scss, ['sass', reload]);
-	gulp.watch([config.base + '/**/*', '!' + config.html, '!' + config.scss], ['copy:dev:assets', reload]);
+
+		gulp.watch(config.html, [reload]);
+		gulp.watch(config.scss, ['sass', reload]);
+		gulp.watch([config.base + '/**/*', '!' + config.html, '!' + config.scss], ['copy:dev:assets', reload])
+	}
+);
+
+
+// Inject JSON Variables for Production
+gulp.task('inject:cachebust', function() {
+  var val = (parseInt(new Date().getTime()/1000, 10)).toString(16);
+  return gulp.src(config.dist + '/*.html')
+	  // .pipe(debug())
+      .pipe(inject.replace('=cachebust', '='+val))
+      .pipe(gulp.dest(config.dist));
 });
 
-// Inject JSON Varibles
-gulp.task('inject:dev', function(cb) {
-  var keys = _.keys(devConfig);
-  var stream = gulp.src(config.html);
-
-  for(var i = 0; i < keys.length; i++) {
-    stream = stream.pipe(inject.replace('<% ' + keys[i] + ' %>', devConfig[keys[i]]));
-  }
-
-  stream = stream.pipe(gulp.dest(config.dev));
-
-  setTimeout(cb, 100);
-});
-
-// Inject JSON Varibles for Production
-gulp.task('inject:prod', function(cb) {
-  var keys = _.keys(liveConfig);
-  var stream = gulp.src(config.dist + '/**/*.html');
-
-  for(var i = 0; i < keys.length; i++) {
-    stream = stream.pipe(inject.replace('<% ' + keys[i] + ' %>', liveConfig[keys[i]]));
-  }
-
-  stream = stream.pipe(gulp.dest(config.dist));
-
-  setTimeout(cb, 100);
-});
 
 //run the app packed in the dist folder
 gulp.task('serve:dist', ['build:dist'], function() {
@@ -200,5 +185,3 @@ gulp.task('serve:dist', ['build:dist'], function() {
 //default task
 gulp.task('default', ['serve']);
 
-// Export contents of sketch file
-gulp.task('sketch', run('sketchtool export slices --compact=YES --save-for-web=YES sketch/static-starter.sketch --output=client/img'))
