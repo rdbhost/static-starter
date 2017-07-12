@@ -1,37 +1,28 @@
 {
-  "author": "Damage Team - Roy, Dom, John, Hollie, Matt",
+  "author": "RdbHost; David Keeney",
   "name": "StaticStarter",
-  "email": "hi@wearedamage.com",
-  "url": "http://github.com/wearedamage",
-  "homepage": "https://wearedamage.com",
+  "email": "hi@rdbhost.com",
+  "url": "http://github.com/rdbhost",
+  "homepage": "https://www.rdbhost.com",
   "description": "Bespoke Starting Point",
+  "license": "MIT",
   "devDependencies": {
     "browser-sync": "^2.7.13",
-    "bs-html-injector": "^3.0.3",
     "del": "^1.1.1",
-    "grunt-cli": "^1.2.0",
     "gulp": "^3.9.1",
     "gulp-changed": "^3.1.0",
     "gulp-clean-css": "^2.0.12",
-    "gulp-if": "^1.2.5",
-    "gulp-imagemin": "^2.2.1",
     "gulp-inject-string": "^1.1.0",
     "gulp-load-plugins": "^0.10.0",
-    "gulp-minify-html": "^1.0.6",
-    "gulp-notify": "^2.2.0",
-    "gulp-run-command": "0.0.7",
     "gulp-sass": "^2.0.4",
     "gulp-size": "^1.2.3",
     "gulp-sourcemaps": "^1.5.2",
     "gulp-useref": "^1.1.2",
     "lodash": "^3.8.0",
-    "run-sequence": "^1.1.5",
-    "sync-request": "^4.0.1"
+    "run-sequence": "^1.1.5"
   },
   "engines": {
     "node": ">=0.10.x"
   },
-  "dependencies": {
-    "gulp-filter": "^5.0.0"
-  }
+  "dependencies": {}
 }

@@ -12,6 +12,5 @@ client/vendor
 npm-debug.log
 
 # build
-build/tmp
 build/dist
 build/dev

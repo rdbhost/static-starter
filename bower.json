@@ -1,6 +1,0 @@
-{
-  "name": "static-starter",
-  "dependencies": {
-    "jquery": "jquery#1.11.3"
-  }
-}
